@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/vue/vue.js"></script>
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="_app_" v-cloak class="layui-layout layui-layout-admin">
+    <div class="layui-header layui-bg-blue">
+        <div class="layui-logo layui-bg-blue">Katyusha</div>
+    </div>
+
+    <div class="layui-side layui-bg-cyan">
+        <div class="layui-side-scroll  layui-bg-cyan">
+            <ul class="layui-nav layui-nav-tree  layui-bg-cyan">
+                <li class="layui-nav-item" v-for="menu,index in menus" :key="index">
+                    <a href="javascript:;">{{menu.name}}</a>
+                    <dl class="layui-nav-child" v-for="child in menu.childs">
+                        <dd>
+                            <a href="javascript:;" @click="loadPage" :data-url="child.url">{{child.name}}</a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body">
+        <div style="padding: 15px;">
+            <div id="bodyDiv"></div>
+        </div>
+        <table id="demo"></table>
+        <div class="layui-footer">{{system.foot}}</div>
+    </div>
+</div>
+
+<script>
+    let element, form, table, layer;
+    layui.config({
+        base: '/static/layui/ext/' //设定扩展的 layui 模块的所在目录，一般用于外部模块扩展
+    });
+
+    function _loadLayui(back) {
+        layui.use(['layer', 'element', 'form', 'table', 'table-ext', 'layer-ext', 'common-ext'], function () {
+            layer = layui.layer, element = layui.element, form = layui.form, table = layui.table;
+            back ? back() : false;
+        })
+    }
+
+    !function () {
+        const app = new Vue({
+            el: '#_app_',
+            data: {
+                system: {},
+                menus: [{
+                    name: "系统管理", url: "", childs: [
+                        {name: "字典管理", url: "/page/dict/index"},
+                        {name: "表格管理", url: "/page/table/index"},
+                    ]
+                }],
+            },
+            methods: {
+                loadPage: function (e){
+                    let url = $(e.target).attr("data-url");
+                    $("#bodyDiv").html($.load(url))
+                }
+            },
+            mounted: function () {
+				_loadLayui()
+            }
+        });
+    }()
+</script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<div id="app">
+    <div id="toolbar" class="toolbar">
+
+    </div>
+    <table id="table"></table>
+</div>
+
+<script>
+    !function () {
+        const _this = new Vue({
+            el: '#app',
+            data: {
+                tableId: "table",
+                tableInst: null,
+                cols: [
+                    {checkbox: true},
+                    {expand: true},
+                    {field: "tagName", title: "类型名称"},
+                    {field: "tagCode", title: "类型编码"},
+                    {field: "remark", title: "备注"},
+                    {field: "updateTime", title: "更新时间"},
+                    {field: "createTime", title: "创建时间"}
+                ]
+            },
+            methods: {},
+            mounted: function () {
+                $("#toolbar").toolbar([{
+                    name: "tagCode",
+                    text: "类型编码",
+                    type: "input"
+                }, {type: "submit"}], function (filterObj) {
+                    _this.tableInst.reload({where: filterObj})
+                });
+                this.tableInst = table.render({
+                    elem: `#${this.tableId}`,
+                    url: "/dict/tag",
+                    cols: [this.cols],
+                    childUrl: "/dict/{tagCode}",
+                    page: true,
+                    expand: function (chlidTable, item) {
+
+                    },
+                    add: () => {
+                        let items = [{name: "tagCode", type: "input", text: "类型编码"},
+                            {name: "tagName", type: "input", text: "类型名称"}
+                        ]
+                        let len = items.length;
+                        let formEle = `<form class="layui-form layui-form-pane" onsubmit="return false;" style="padding: 15px;padding-right: 0px;">
+                                        </form>`;
+
+                        let formItem = $(`<div class="layui-form-item"></div>`);
+                        formItem.append(`<div class="layui-inline">
+                                             <label class="layui-form-label">${items[0].text}</label>
+                                             <div class="layui-input-inline">
+                                                 <input type="text" name="${items[0].name}" autocomplete="off" placeholder="请输入${items[0].text}" class="layui-input">
+                                             </div>
+                                         </div>`)
+                        formEle = $(formEle);
+                        formEle.append(formItem)
+                        // `<div class="layui-form-item">
+                        //                         <div class="layui-inline">
+                        //                             <label class="layui-form-label">长输入框</label>
+                        //                             <div class="layui-input-inline">
+                        //                                 <input type="text" name="tagCode" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        //                             </div>
+                        //                         </div>
+                        //                         <div class="layui-inline">
+                        //                             <label class="layui-form-label">长输入框</label>
+                        //                             <div class="layui-input-inline">
+                        //                                 <input type="text" name="tagCode" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        //                             </div>
+                        //                         </div>
+                        //                     </div>
+                        //                     <div class="layui-form-item">
+                        //                         <div class="layui-inline">
+                        //                             <label class="layui-form-label">长输入框</label>
+                        //                             <div class="layui-input-inline">
+                        //                                 <input type="text" name="tagCode" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        //                             </div>
+                        //                         </div>
+                        //                         <div class="layui-inline">
+                        //                             <label class="layui-form-label">长输入框</label>
+                        //                             <div class="layui-input-inline">
+                        //                                 <input type="text" name="tagCode" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        //                             </div>
+                        //                         </div>
+                        //                     </div>`
+                        $.open({
+                            content: formEle.prop("outerHTML"),
+                            area: ['660px', '400px']
+                        })
+                    }, edit: (item) => {
+
+                    }, delete: (item) => {
+                    }
+                })
+            }
+        });
+    }();
+</script>
